@@ -1,5 +1,5 @@
 # ConvexHull2D
-Calculate the convex hull of 2-D points
+Calculate the convex hull of 2-D points using `"graham_scan"`
 
 Test case is const vector<point> p{ {1, 0}, {2, 0}, {0, 1}, {0, 2}, {3, 1}, {3, 3}, {3, 2}, {2, 3},{1, 3}, {1, 2}, {2, 1} };
 THe points are as follow:

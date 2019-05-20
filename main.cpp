@@ -1,6 +1,10 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 #include <vector>
+#include <string>
+#include <sstream> // std::istringstream
+#include <tuple>
 #include <algorithm>
 using namespace std;
 
@@ -19,11 +23,11 @@ double getDistance(const point &a, const point &b) {
 }
 
 /// graham_scan算法计算凸包，用vector模拟stack
-void graham_scan(vector<point> p, vector<point>& convex) {	// convex 是结果
+vector<point> graham_scan(vector<point> p) {	// convex 是结果
 	printf("**** graham scan begin ****\n\n");
-	
+
 	const int N = p.size();
-	convex.resize(N);
+	vector<point> convex(N);
 
 	// 1、找出y最小的点，如果有多个，找出其中x最小的点，作为起始点
 	int ori_idx = 0;
@@ -35,41 +39,41 @@ void graham_scan(vector<point> p, vector<point>& convex) {	// convex 是结果
 
 	// 2、按照极角对剩余 N - 1 个点进行排序，角度相同按x升序
 	sort(p.begin() + 1, p.end(), [p0 = p[0]](const point &a, const point &b) {
-			const double cro = cross(p0, a, p0, b);
-			if (cro == 0) return a.x < b.x;
-			return cro > 0;
-		}
+		const double cro = cross(p0, a, p0, b);
+		if (cro == 0) return a.x < b.x;
+		return cro > 0;
+	}
 	);
 	printf("极角排序结果\n");
 	for (int i = 0; i < N; ++i)
-		printf("(%.2f, %.2f)\n", p[i].x, p[i].y);
+		printf("(%.0f, %.0f)\n", p[i].x, p[i].y);
+	printf("\n");
 
 	// 3、进行 graham scan 算法, top 是总数
 	int top = 0, i = 0;
-	while (i <= N) {
+	while (i <= N && top < N) {
 		//不足两个直接入栈，否则叉积判断方向，直到成功入栈
 		while (top >= 2 && cross(convex[top - 2], convex[top - 1], convex[top - 2], p[i % N]) < 0) --top;
-		convex[top] = p[i % N];
+			convex[top] = p[i % N];
 		++top;
 		++i;
 	}
 
 	// 4、按逆时针顺序输出
-	printf("\n按逆时针顺序输出凸包点\n");
-	for (int i = 0; i < top; ++i)
-		cout << convex[i].x << " " << convex[i].y << endl;
-
 	convex = vector<point>(convex.begin(), convex.begin() + top);
+
+	cout << "(" << convex[0].x << ", " << convex[0].y << ")" << " - 起点" << endl;
+	for (int i = 1; i < convex.size(); ++i)
+		cout << "(" << convex[i].x << ", " << convex[i].y << ")" << endl;
+	cout << "(" << convex[0].x << ", " << convex[0].y << ")" << " - 回到起点" << endl;
+
 	printf("\n**** graham scan end ****\n\n");
+	return convex;
 }
 
 int main()
 {
-	const vector<point> p{ {1, 0}, {2, 0}, {0, 1}, {0, 2}, {3, 1}, {3, 3}, {3, 2}, {2, 3},{1, 3}, {1, 2}, {2, 1} };
-	vector<point> res;
-	graham_scan(p, res);
-	printf("凸包结果为\n");
-	for (const auto& ri : res)
-		cout << ri.x << " " << ri.y << endl;
+	const vector<point> p{ { 2, 0 },{ 1, 0 }, {3, 0},{ 0, 1 },{ 0, 2 },{ 3, 1 },{ 3, 3 },{ 3, 2 },{ 2, 3 },{ 1, 3 },{ 1, 2 },{ 2, 1 } };
+	vector<point> res = graham_scan(p);
 	return 0;
 }

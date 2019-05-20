@@ -71,9 +71,62 @@ vector<point> graham_scan(vector<point> p) {	// convex ÊÇ½á¹û
 	return convex;
 }
 
-int main()
+//// test
+//int main()
+//{
+//	const vector<point> p{ { 2, 0 },{ 1, 0 }, {3, 0},{ 0, 1 },{ 0, 2 },{ 3, 1 },{ 3, 3 },{ 3, 2 },{ 2, 3 },{ 1, 3 },{ 1, 2 },{ 2, 1 } };
+//	vector<point> res = graham_scan(p);
+//	return 0;
+//}
+
+
+int main(int argc, char** argv)
 {
-	const vector<point> p{ { 2, 0 },{ 1, 0 }, {3, 0},{ 0, 1 },{ 0, 2 },{ 3, 1 },{ 3, 3 },{ 3, 2 },{ 2, 3 },{ 1, 3 },{ 1, 2 },{ 2, 1 } };
-	vector<point> res = graham_scan(p);
+	argc = 1;
+
+	ifstream in_verts;
+	in_verts.open(argv[1]);
+	if (!in_verts.is_open())
+	{
+		cout << "Error openging input" << endl;
+		exit(-1);
+	}
+	vector<point> verts;
+	vector<tuple<int, float, float, int>> res;
+	int cur_z = -1, cur_tooth = 0, pre_tooth = 0, z;
+	float x, y;
+	while (in_verts >> cur_tooth >> x >> y >> z) {
+		if (cur_tooth != pre_tooth)	{
+			
+			//for (auto v : verts)
+			//	cout << v.x << " " << v.y << endl;
+			vector<point> t = graham_scan(verts);
+			for (const auto& ti : t)
+				res.emplace_back(pre_tooth, ti.x, ti.y, cur_z);
+			cout << "res.size() = " << res.size() << endl;
+			pre_tooth = cur_tooth;
+			verts.clear();
+			
+		}
+		cur_z = z;
+		verts.emplace_back(x, y);
+	}
+	vector<point> t = graham_scan(verts);
+	for (const auto& ti : t)
+		res.emplace_back(pre_tooth, ti.x, ti.y, cur_z);
+	cout << "res.size() = " << res.size() << endl;
+	in_verts.close();
+
+	ofstream out_verts;
+	out_verts.open(R"(.\out_convex.txt)");
+	if(!out_verts.is_open())
+	{
+		cout << "Error openging output" << endl;
+		exit(-1);
+	}
+	for (const auto& r : res)
+		out_verts << get<0>(r) << " " << get<1>(r) << " " << get<2>(r) << " " << get<3>(r) << endl;
+	out_verts.close();
+	
 	return 0;
 }

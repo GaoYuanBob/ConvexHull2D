@@ -6,4 +6,4 @@ THe points are as follow:
 <div><img src="https://github.com/GaoYuanBob/ConvexHull2D/blob/master/Test_case_pic.png" width = 30%><div>
 
 The result is as follow:
-<div><img src="https://github.com/GaoYuanBob/ConvexHull2D/blob/master/Test_result.png" width = 25%><div>
+<div><img src="https://github.com/GaoYuanBob/ConvexHull2D/blob/master/Test_outcome.png" width = 25%><div>
